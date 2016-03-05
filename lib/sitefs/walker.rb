@@ -3,7 +3,7 @@
     symlink write
   },
   'handlers' => %w{
-    page asset
+    page asset feed
   },
   'view_models' => %w{
     page
@@ -25,6 +25,8 @@ module Sitefs
     HANDLERS = {
       'page' => Handlers::Page,
       '{jpeg,jpg,png,gif}' => Handlers::Asset,
+      'feed.rb' => Handlers::Feed,
+      'feed' => Handlers::Feed,
     }
 
     COPIERS = {

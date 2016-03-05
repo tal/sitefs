@@ -3,6 +3,8 @@ require "sitefs/version"
 %w{
   basic_pipeline
   content_file
+  feed_config_builder
+  feed_config
   renderer
   layout
   page_manager
