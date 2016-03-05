@@ -11,5 +11,4 @@ require "pry"
 
 @w = Sitefs::Watcher.new('./site', './dist')
 @w.listener.start
-
-Pry.start
+sleep

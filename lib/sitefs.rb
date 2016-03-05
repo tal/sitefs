@@ -10,6 +10,7 @@ require "sitefs/version"
   page_manager
   render_context
   walker
+  watcher
 }.each do |name|
   require "sitefs/#{name}"
 end
