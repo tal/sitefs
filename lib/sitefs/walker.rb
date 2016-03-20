@@ -1,9 +1,9 @@
 {
   'copiers' => %w{
-    symlink write
+    copy symlink write scss
   },
   'handlers' => %w{
-    page asset feed
+    page quick_page asset scss feed
   },
   'view_models' => %w{
     page
@@ -24,14 +24,19 @@ module Sitefs
 
     HANDLERS = {
       'page' => Handlers::Page,
-      '{jpeg,jpg,png,gif}' => Handlers::Asset,
+      'page.{html,md,markdown}' => Handlers::QuickPage,
+      'scss' => Handlers::SCSS,
+      '{jpeg,jpg,png,gif,css}' => Handlers::Asset,
+      '{eot,svg,ttf,woff}' => Handlers::Asset,
       'feed.rb' => Handlers::Feed,
       'feed' => Handlers::Feed,
     }
 
     COPIERS = {
       symlink: Copiers::Symlink,
+      copy: Copiers::Copy,
       write: Copiers::Write,
+      scss: Copiers::SCSS,
     }
 
     def initialize source, dest

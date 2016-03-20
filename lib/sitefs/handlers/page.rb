@@ -30,15 +30,19 @@ module Sitefs
       end
 
       def tag_strs
-        if tags_exists?
+        @tag_strs ||= if tags_exists?
           File.read(tags_file_name).split("\n")
         else
           []
         end
       end
 
+      def tagged? str
+        tag_strs.include? str
+      end
+
       def content
-        @content ||= ContentFile.new(file_path, 'content', @context)
+        @content ||= ContentFile.new(file_path, 'content', context: @context)
       end
 
       def published_at
@@ -61,24 +65,44 @@ module Sitefs
         @layout ||= Layout.for_dir file_path
       end
 
-      def desitnation_name
-        'index.html'
+      def page_config
+        @page_config ||= PageConfig.for_dir(file_path)
+      end
+
+      def page_layout_file_name
+        page_config.layout_for self
+      end
+
+      def page_layout
+        @page_layout ||= Layout.for_dir(file_path, layout_name: page_layout_file_name)
       end
 
       def destination_path
         dir = file_path.gsub('.page', '').sub(File.expand_path(root), '')
 
-        File.join(dir, desitnation_name)
+        File.join(dir, 'index.html')
       end
 
       def href
         destination_path.sub('/index.html', '')
       end
 
+      def view_model
+        @view_model ||= ViewModels::Page.new(self)
+      end
+
       def to_s
-        layout.generate context do
-          content.to_s
+        layouts = [page_layout, layout].compact
+
+        context.current_page = view_model
+
+        str = layouts.reduce(content.to_s) do |prev, layout|
+          layout.generate(context) { prev }
         end
+
+        context.current_page = nil
+
+        str
       end
 
     end

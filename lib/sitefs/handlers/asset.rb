@@ -2,7 +2,7 @@ module Sitefs
   module Handlers
     class Asset
       attr_reader :file_path, :root
-      @copier = :symlink
+      @copier = :copy
 
       def initialize file, root, context
         @root = root

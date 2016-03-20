@@ -1,5 +1,7 @@
+require 'fileutils'
+
 module Sitefs::Copiers
-  class Write
+  class Copy
     def initialize source_dir, dest_dir
       @dest_dir = dest_dir
       @source_dir = source_dir
@@ -8,12 +10,16 @@ module Sitefs::Copiers
     def copy_handler handler
       source = handler.file_path
       dest = handler.destination_path
-
       dest = File.join(@dest_dir, dest)
 
-      puts "write: #{source} => #{dest}"
-      FileUtils.mkdir_p File.dirname(dest)
-      File.open(dest, "w") { |io| io.puts handler.to_s }
+      puts "copy: #{source} => #{dest}"
+      dir = File.dirname(dest)
+      FileUtils.mkdir_p dir
+
+      if File.exist?(dest)
+        FileUtils.rm dest
+      end
+      FileUtils.cp source, dest
     end
   end
 end

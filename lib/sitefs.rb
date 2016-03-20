@@ -1,5 +1,7 @@
 require "sitefs/version"
 
+require 'stamp'
+
 %w{
   basic_pipeline
   content_file
@@ -8,6 +10,7 @@ require "sitefs/version"
   renderer
   layout
   page_manager
+  page_config
   render_context
   walker
   watcher

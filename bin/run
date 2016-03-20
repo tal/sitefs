@@ -9,6 +9,6 @@ require "sitefs"
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
 
-@w = Sitefs::Watcher.new('./site', './dist')
-@w.listener.start
+@w = Sitefs::Watcher.new('./tal.by', './tal.by-dist')
+@w.start
 sleep

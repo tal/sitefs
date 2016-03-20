@@ -1,8 +1,14 @@
 module Sitefs
   class ContentFile
     attr_reader :file_name
-    def initialize dir, name, context
-      @file_name = Dir[File.join(dir, "#{name}.*")].first
+    def initialize dir, name = nil, context:nil
+      if name
+        @file_name = Dir[File.join(dir, "#{name}.*")].first
+      else
+        @file_name = dir
+      end
+
+      @file_name = File.expand_path(@file_name)
     end
 
     def pipeline

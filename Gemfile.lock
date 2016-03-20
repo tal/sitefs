@@ -6,6 +6,8 @@ PATH
       html-pipeline-rouge_filter (~> 1.0)
       listen (~> 3.0)
       rinku (~> 1.7.3)
+      sass (~> 3.4)
+      stamp (~> 0.6)
 
 GEM
   remote: https://rubygems.org/
@@ -60,7 +62,9 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
+    sass (3.4.21)
     slop (3.6.0)
+    stamp (0.6.0)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)

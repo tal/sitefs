@@ -23,15 +23,20 @@ module Sitefs
     end
 
     class << self
-      def file_for_dir dir
+      def file_for_dir dir, layout_name: FILE_NAME
+        return unless layout_name
 
         folder = nil
+
+        unless File.directory?(dir)
+          dir = File.dirname(dir)
+        end
 
         orig = Dir.pwd
 
         Dir.chdir dir
 
-        while !File.exists?(FILE_NAME) do
+        while !File.exists?(layout_name) do
           if Dir.pwd == '/'
             return
           end
@@ -44,12 +49,12 @@ module Sitefs
         Dir.chdir orig
 
         if folder
-          File.join folder, FILE_NAME
+          File.join folder, layout_name
         end
       end
 
-      def for_dir dir
-        (file_name = file_for_dir(dir)) && new(file_name)
+      def for_dir dir, **opts
+        (file_name = file_for_dir(dir, **opts)) && new(file_name)
       end
     end
   end
