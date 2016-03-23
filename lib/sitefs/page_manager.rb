@@ -16,10 +16,15 @@ module Sitefs
       tags
     end
 
-    def tagged tag
-      pages.select do |page|
-        page.tag_strs.include? tag
-      end
+    def tagged *tags
+
+      published = pages.select(&:published?)
+
+      tags.reduce published do |pages, tag|
+        pages.select do |page|
+          page.tag_strs.include? tag
+        end
+      end.sort_by(&:published_at).reverse
     end
   end
 end

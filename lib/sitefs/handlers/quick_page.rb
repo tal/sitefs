@@ -24,6 +24,10 @@ module Sitefs
         tag_strs.include? str
       end
 
+      def published_at
+        File.birthtime(@file_path)
+      end
+
       def published?
         published_at && published_at < Time.now
       end

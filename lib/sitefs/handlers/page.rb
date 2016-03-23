@@ -91,18 +91,40 @@ module Sitefs
         @view_model ||= ViewModels::Page.new(self)
       end
 
-      def to_s
-        layouts = [page_layout, layout].compact
+      def html_str
+        @html_str ||= begin
+          layouts = [page_layout, layout].compact
 
-        context.current_page = view_model
+          context.current_page = view_model
 
-        str = layouts.reduce(content.to_s) do |prev, layout|
-          layout.generate(context) { prev }
+          str = layouts.reduce(content.to_s) do |prev, layout|
+            layout.generate(context) { prev }
+          end
+
+          context.current_page = nil
+
+          str
         end
+      end
 
-        context.current_page = nil
+      def result
+        @result ||= FinishingPipeline.call(html_str)
+      end
 
-        str
+      def title
+        content.title
+      end
+
+      def subtitle
+        content.subtitle
+      end
+
+      def xml
+        result[:output]
+      end
+
+      def to_s
+        xml.to_s
       end
 
     end

@@ -6,16 +6,14 @@ module Sitefs::ViewModels
       @handler = handler
     end
 
-    def title
-      @handler.content.title
-    end
-
     def escaped_body
       CGI.escapeHTML @handler.content.to_s
     end
 
-    def link klass: []
-      %[<a href="#{href}" class="#{klass.join(' ')}">#{title}</a>]
+    def link class_names: [], title:nil
+      _title = title || @handler.title
+
+      %[<a href="#{href}" class="#{class_names.join(' ')}">#{_title}</a>]
     end
 
     def method_missing name, *args, &blk

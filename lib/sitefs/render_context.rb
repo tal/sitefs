@@ -11,8 +11,12 @@ module Sitefs
       page_manager.pages.map {|p| p.view_model}
     end
 
-    def tagged tag, &blk
-      page_manager.tagged(tag).map {|p| p.view_model}.map(&blk)
+    def title
+      current_page && current_page.title
+    end
+
+    def tagged *tags, &blk
+      page_manager.tagged(*tags).map {|p| p.view_model}.map(&blk)
     end
   end
 end
