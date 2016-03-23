@@ -70,11 +70,11 @@ module Sitefs
       end
 
       def page_layout_file_name
-        page_config.layout_for self
+        page_config && page_config.layout_for(self)
       end
 
       def page_layout
-        @page_layout ||= Layout.for_dir(file_path, layout_name: page_layout_file_name)
+        @page_layout ||= page_layout_file_name && Layout.for_dir(file_path, layout_name: page_layout_file_name)
       end
 
       def destination_path

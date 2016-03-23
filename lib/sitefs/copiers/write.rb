@@ -11,9 +11,16 @@ module Sitefs::Copiers
 
       dest = File.join(@dest_dir, dest)
 
+      content = handler.to_s
+
+      if File.exist?(dest) && File.binread(dest) == content
+        puts "write: #{source} => #{dest} (identical/skipped)"
+        return
+      end
+
       puts "write: #{source} => #{dest}"
       FileUtils.mkdir_p File.dirname(dest)
-      File.open(dest, "w") { |io| io.puts handler.to_s }
+      File.write(dest, content)
     end
   end
 end

@@ -13,9 +13,16 @@ module Sitefs::Copiers
       dest = handler.destination_path
       dest = File.join(@dest_dir, dest).sub(/scss$/, 'css')
 
+      content = content_for(source)
+
+      if File.exist?(dest) && File.binread(dest) == content
+        puts "scss: #{source} => #{dest} (identical/skipped)"
+        return
+      end
+
       puts "scss: #{source} => #{dest}"
       FileUtils.mkdir_p File.dirname(dest)
-      File.write(dest, content_for(source))
+      File.write(dest, content)
     end
 
     def content_for original_file_name

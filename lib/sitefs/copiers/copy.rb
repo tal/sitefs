@@ -12,7 +12,18 @@ module Sitefs::Copiers
       dest = handler.destination_path
       dest = File.join(@dest_dir, dest)
 
+      if source == dest
+        puts "copy: #{source} => #{dest} (same/skipped)"
+        return
+      end
+
+      if File.exist?(dest) && File.binread(source) == File.binread(dest)
+        puts "copy: #{source} => #{dest} (identical/skipped)"
+        return
+      end
+
       puts "copy: #{source} => #{dest}"
+
       dir = File.dirname(dest)
       FileUtils.mkdir_p dir
 

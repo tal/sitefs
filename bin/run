@@ -9,6 +9,9 @@ require "sitefs"
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
 
-@w = Sitefs::Watcher.new('./tal.by', './tal.by-dist')
-@w.start
-sleep
+# @w = Sitefs::Watcher.new('./tal.by', './tal.by-dist')
+# @w.start
+# sleep
+
+@walker = Sitefs::Walker.new('./site', './site')
+@walker.copy_files
