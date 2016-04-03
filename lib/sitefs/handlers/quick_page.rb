@@ -1,6 +1,8 @@
 module Sitefs
   module Handlers
     class QuickPage
+      include BasePage
+
       attr_reader :file_path, :context, :root
       @copier = :write
 
@@ -28,40 +30,16 @@ module Sitefs
         File.birthtime(@file_path)
       end
 
-      def published?
-        published_at && published_at < Time.now
+      def destination_path
+        file_path.gsub(/\.page.*$/, '.html').sub(File.expand_path(root), '')
       end
 
       def layout
         @layout ||= Layout.for_dir File.dirname(file_path)
       end
 
-      def page_config
-        @page_config ||= PageConfig.for_dir(file_path)
-      end
-
-      def page_layout_file_name
-        page_config && page_config.layout_for(self)
-      end
-
-      def page_layout
-        @page_layout ||= page_layout_file_name && Layout.for_dir(file_path, layout_name: page_layout_file_name)
-      end
-
-      def destination_path
-        file_path.gsub('.page', '').sub(File.expand_path(root), '')
-      end
-
-      def href
-        destination_path.sub('/index.html', '')
-      end
-
       def to_s
-        layouts = [page_layout, layout].compact
-
-        layouts.reduce(content.to_s) do |prev, layout|
-          layout.generate(context) { prev }
-        end
+        html_str
       end
     end
   end

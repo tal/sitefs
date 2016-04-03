@@ -7,6 +7,14 @@ module Sitefs
       @page_manager = PageManager.new
     end
 
+    def partial name
+      dir = current_page && File.dirname(current_page.file_path)
+
+      if dir
+        ContentFile.new(dir, name, context: self).to_s
+      end
+    end
+
     def pages
       page_manager.pages.map {|p| p.view_model}
     end

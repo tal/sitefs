@@ -1,6 +1,8 @@
 module Sitefs
   module Handlers
     class Page
+      include BasePage
+
       attr_reader :file_path, :context, :root
       @copier = :write
 
@@ -45,6 +47,12 @@ module Sitefs
         @content ||= ContentFile.new(file_path, 'content', context: @context)
       end
 
+      def destination_path
+        dir = file_path.gsub('.page', '').sub(File.expand_path(root), '')
+
+        File.join(dir, 'index.html')
+      end
+
       def published_at
         @published_at ||= if published_exists?
           published_info = File.read(published_file_name).chomp
@@ -57,74 +65,16 @@ module Sitefs
         end
       end
 
-      def published?
-        published_at && published_at < Time.now
-      end
-
       def layout
         @layout ||= Layout.for_dir file_path
-      end
-
-      def page_config
-        @page_config ||= PageConfig.for_dir(file_path)
-      end
-
-      def page_layout_file_name
-        page_config && page_config.layout_for(self)
-      end
-
-      def page_layout
-        @page_layout ||= page_layout_file_name && Layout.for_dir(file_path, layout_name: page_layout_file_name)
-      end
-
-      def destination_path
-        dir = file_path.gsub('.page', '').sub(File.expand_path(root), '')
-
-        File.join(dir, 'index.html')
-      end
-
-      def href
-        destination_path.sub('/index.html', '')
-      end
-
-      def view_model
-        @view_model ||= ViewModels::Page.new(self)
-      end
-
-      def html_str
-        @html_str ||= begin
-          layouts = [page_layout, layout].compact
-
-          context.current_page = view_model
-
-          str = layouts.reduce(content.to_s) do |prev, layout|
-            layout.generate(context) { prev }
-          end
-
-          context.current_page = nil
-
-          str
-        end
       end
 
       def result
         @result ||= FinishingPipeline.call(html_str)
       end
 
-      def title
-        content.title
-      end
-
-      def subtitle
-        content.subtitle
-      end
-
-      def xml
-        result[:output]
-      end
-
       def to_s
-        xml.to_s
+        result[:output].to_s
       end
 
     end

@@ -3,7 +3,7 @@
     copy symlink write scss
   },
   'handlers' => %w{
-    page quick_page asset scss feed
+    base_page page quick_page asset scss feed
   },
   'view_models' => %w{
     page
@@ -24,7 +24,7 @@ module Sitefs
 
     HANDLERS = {
       'page' => Handlers::Page,
-      'page.{html,md,markdown}' => Handlers::QuickPage,
+      'page.{html,md,markdown,html.erb}' => Handlers::QuickPage,
       'scss' => Handlers::SCSS,
       '{jpeg,jpg,png,gif}' => Handlers::Asset,
       '{css,js}' => Handlers::Asset,

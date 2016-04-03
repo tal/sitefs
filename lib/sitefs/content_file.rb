@@ -5,12 +5,15 @@ module Sitefs
   class ContentFile
     attr_reader :file_name
     def initialize dir, name = nil, context:nil
+
       @context = context
       if name
-        @file_name = Dir[File.join(dir, "#{name}.*")].first
+        @file_name = Dir[File.join(dir, "#{name}.*")].first || File.join(dir, name)
       else
         @file_name = dir
       end
+
+      puts "@file_name: #{@file_name}"
 
       @file_name = File.expand_path(@file_name)
     end
