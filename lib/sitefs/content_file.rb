@@ -13,21 +13,19 @@ module Sitefs
         @file_name = dir
       end
 
-      puts "@file_name: #{@file_name}"
-
       @file_name = File.expand_path(@file_name)
     end
 
     def result
       @result ||= case file_name
       when /\.(md|markdown)$/
-        MarkdownContentPipeline.call(file_contents)
+        Pipelines.markdown.call(file_contents)
       when /\.erb$/
         renderer = Renderer.new(file_contents)
         html = renderer.render(@context)
-        ContentHtmlPipeline.call(html)
+        Pipelines.content.call(html)
       else
-        ContentHtmlPipeline.call(file_contents)
+        Pipelines.content.call(file_contents)
       end
     end
 
@@ -49,6 +47,10 @@ module Sitefs
 
     def to_s
       xml.to_s
+    end
+
+    def finished **opts
+      Pipelines.finishing(to_s, **opts)[:output].to_s
     end
   end
 end

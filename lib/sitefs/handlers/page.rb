@@ -70,11 +70,17 @@ module Sitefs
       end
 
       def result
-        @result ||= FinishingPipeline.call(html_str)
+        @result ||= Pipelines.finishing(html_str)
       end
 
-      def to_s
-        result[:output].to_s
+      def to_s **opts
+        if opts.empty?
+          res = result
+        else
+          res = Pipelines.finishing(html_str, **opts)
+        end
+
+        res[:output].to_s
       end
 
     end

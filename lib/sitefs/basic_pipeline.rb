@@ -1,3 +1,5 @@
+require 'uri'
+
 require 'html/pipeline'
 require 'html/pipeline/rouge_filter'
 
@@ -20,17 +22,65 @@ module Sitefs
     end
   end
 
-  ContentHtmlPipeline = HTML::Pipeline.new([
-    TitleDeterminer,
-  ])
+  class RelativePathFilter < HTML::Pipeline::Filter
+    def call
+      base_path = context[:image_base_path] || context[:base_path]
+      context_path = context[:context_path]
 
-  MarkdownContentPipeline = HTML::Pipeline.new(
-    [HTML::Pipeline::MarkdownFilter] + ContentHtmlPipeline.filters, {
-    gfm: true,
-  })
+      unless base_path || context_path
+        return doc
+      end
 
-  FinishingPipeline = HTML::Pipeline.new([
-    HTML::Pipeline::AutolinkFilter,
-    HTML::Pipeline::RougeFilter,
-  ])
+      doc.search("img").each do |img|
+        next if img['src'].nil?
+
+        src = img['src'].strip
+
+        if src.start_with?('/') || src.start_with?('http')
+        elsif context_path
+          src = File.join(context_path, src)
+        end
+
+        if base_path && src.start_with?('/')
+          src = URI.join(base_path, src).to_s
+        end
+
+        img["src"] = src
+      end
+      doc
+
+    end
+
+  end
+
+  module Pipelines
+    extend self
+
+    def content
+      HTML::Pipeline.new([
+         TitleDeterminer,
+       ])
+    end
+
+    def markdown
+      HTML::Pipeline.new(
+          [
+            HTML::Pipeline::MarkdownFilter,
+            TitleDeterminer
+          ], {
+          gfm: true,
+        })
+    end
+
+    def finishing str, **opts
+
+      filters = [
+        RelativePathFilter,
+        HTML::Pipeline::AutolinkFilter,
+        HTML::Pipeline::RougeFilter,
+      ]
+
+      HTML::Pipeline.new(filters, **opts).call(str)
+    end
+  end
 end

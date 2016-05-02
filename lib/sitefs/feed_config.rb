@@ -1,4 +1,4 @@
-require 'rss'
+require 'atom'
 
 module Sitefs
   class FeedConfig
@@ -14,15 +14,16 @@ module Sitefs
     end
 
     def make_feed
-      RSS::Maker.make('atom') do |maker|
-        @builder._channel_blk.call(maker.channel, context)
+      Atom::Feed.new do |feed|
+        @builder._channel_blk.call(feed, context)
 
         pages.each do |page|
-          maker.items.new_item do |item|
-            @builder._items_blk.call(item, page)
+
+          feed.entries << Atom::Entry.new do |entry|
+            @builder._items_blk.call(entry, page)
           end
         end
-      end
+      end.to_xml
     end
 
   end
