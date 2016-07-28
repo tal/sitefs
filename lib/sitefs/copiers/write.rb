@@ -1,3 +1,5 @@
+require 'digest/sha2'
+
 module Sitefs::Copiers
   class Write
     def initialize source_dir, dest_dir
@@ -13,14 +15,23 @@ module Sitefs::Copiers
 
       content = handler.to_s
 
-      if File.exist?(dest) && File.binread(dest) == content
-        puts "write: #{source} => #{dest} (identical/skipped)"
-        return
+      if File.exist?(dest)
+        current_sha = Digest::SHA2.hexdigest(content)
+        new_sha = Digest::SHA2.hexdigest(File.binread(dest))
+
+        if current_sha == new_sha
+          puts "write: #{source} => #{dest} (identical/skipped)"
+          return
+        end
       end
 
       puts "write: #{source} => #{dest}"
       FileUtils.mkdir_p File.dirname(dest)
-      File.write(dest, content)
+      # File.write(dest, content)
+
+      File.open(dest, "w:UTF-8") do |f|
+        f.write content
+      end
     end
   end
 end

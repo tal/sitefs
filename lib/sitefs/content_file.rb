@@ -30,7 +30,7 @@ module Sitefs
     end
 
     def file_contents
-      @file_contents ||= File.read(@file_name)
+      @file_contents ||= File.read(@file_name, :encoding => 'utf-8')
     end
 
     def title
@@ -39,6 +39,10 @@ module Sitefs
 
     def subtitle
       result[:subtitle]
+    end
+
+    def description
+      result[:description]
     end
 
     def xml

@@ -1,6 +1,10 @@
 site
+site-clean
 dist
 feed.xml
 tal.by/
 tal.by-dist/
 sitefs.com/
+sitefs.com-dist/
+allieandtal.com/
+allieandtal.com-dist/

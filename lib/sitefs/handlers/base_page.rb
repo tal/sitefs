@@ -37,6 +37,10 @@ module Sitefs
         content.subtitle
       end
 
+      def description
+        content.description
+      end
+
       def destination_path
         raise 'implement'
       end

@@ -18,6 +18,12 @@ module Sitefs
         result[:subtitle] = node.text unless text.empty?
       end
 
+      if node = doc.css('h2 + p:nth-of-type(1)').first
+        text = node.text.strip
+
+        result[:description] = node.text[0..199] unless text.empty?
+      end
+
       doc
     end
   end
