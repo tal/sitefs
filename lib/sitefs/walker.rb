@@ -26,7 +26,7 @@ module Sitefs
       'page' => Handlers::Page,
       'page.{html,md,markdown,html.erb}' => Handlers::QuickPage,
       'scss' => Handlers::SCSS,
-      '{jpeg,jpg,png,gif}' => Handlers::Asset,
+      '{jpeg,jpg,JPEG,JPG,png,PNG,gif,GIF}' => Handlers::Asset,
       '{css,js}' => Handlers::Asset,
       '{eot,svg,ttf,woff}' => Handlers::Asset,
       'feed.rb' => Handlers::Feed,

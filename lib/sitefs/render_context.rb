@@ -15,6 +15,17 @@ module Sitefs
       end
     end
 
+    def glob *args
+      args.unshift current_page.file_path
+
+      prefix = File.join(current_page.file_path, '')
+
+      glob = File.join(*args)
+      Dir[glob].map do |path|
+        path.sub(prefix, '')
+      end
+    end
+
     def pages
       page_manager.pages.map {|p| p.view_model}
     end
