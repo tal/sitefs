@@ -1,0 +1,7 @@
+<h1><%= current_page.attributes.tag %></h1>
+
+<% pages_tagged(current_page.attributes.tag).each do |page| %>
+  <div class="page-link">
+    <a href="<%= page.url %>"><%= page.title %></a>
+  </div>
+<% end %>

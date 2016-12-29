@@ -1,41 +1,31 @@
-module Sitefs
-  class RenderContext
-    attr_reader :page_manager
-    attr_accessor :current_page
+class Sitefs::RenderContext
+  attr_reader :current_page
 
-    def initialize
-      @page_manager = PageManager.new
-    end
+  def initialize(registry, current_page: nil)
+    @registry, @current_page = registry, current_page
 
-    def partial name
-      dir = current_page && File.dirname(current_page.file_path)
+    @content_for = {}
+  end
 
-      if dir
-        ContentFile.new(dir, name, context: self).to_s
-      end
-    end
+  def _set_content_for key, val
+    @content_for[key] = val
+  end
 
-    def glob *args
-      args.unshift current_page.file_path
+  def _get_content_for key
+    @content_for[key]
+  end
 
-      prefix = File.join(current_page.file_path, '')
+  def public_tags
+    @registry ? @registry.public_tags : []
+  end
 
-      glob = File.join(*args)
-      Dir[glob].map do |path|
-        path.sub(prefix, '')
-      end
-    end
+  def pages_tagged(tag_str)
+    @registry ? @registry.pages_tagged(tag_str) : []
+  end
 
-    def pages
-      page_manager.pages.map {|p| p.view_model}
-    end
-
-    def title
-      current_page && current_page.title
-    end
-
-    def tagged *tags, &blk
-      page_manager.tagged(*tags).map {|p| p.view_model}.map(&blk)
+  class << self
+    def nil
+      @nil ||= new(nil)
     end
   end
 end

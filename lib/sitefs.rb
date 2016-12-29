@@ -1,23 +1,17 @@
-require "sitefs/version"
+require 'sitefs/version'
 
 require 'stamp'
+require 'autoloaded'
 
 %w{
-  basic_pipeline
-  content_file
-  feed_config_builder
-  feed_config
-  renderer
-  layout
-  page_manager
-  page_config
-  render_context
-  walker
-  watcher
 }.each do |name|
   require "sitefs/#{name}"
 end
 
 module Sitefs
   extend self
+
+  Autoloaded.module do |autoloading|
+    # autoloading.with 'sitefs/dsl_context' => :'Sitefs::DSLContext'
+  end
 end

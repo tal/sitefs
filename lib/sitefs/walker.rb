@@ -1,94 +1,34 @@
-{
-  'copiers' => %w{
-    copy symlink write scss
-  },
-  'handlers' => %w{
-    base_page page quick_page asset scss feed
-  },
-  'view_models' => %w{
-    page
-  },
-}.each do |type, names|
-  names.each do |name|
-    require "sitefs/#{type}/#{name}"
-  end
-end
+# Class used for walking a source directory and discovering what files need to be mapped
+class Sitefs::Walker
+  attr_reader :root_path
 
-module Sitefs
-  def copier_type_for_handler handler
-    handler.class.instance_variable_get :@copier
+  HANDLERS = {
+    'page.{md,markdown}' => Handlers::Markdown,
+    'page.rb' => Handlers::RubyGen,
+    'tag-page.rb' => Handlers::TagPage,
+  }
+
+  def initialize root_path
+    # Ensure the source always has a trailing slash
+    @root_path = File.join(root_path, '')
   end
 
-  class Walker
-    attr_reader :source, :dest
+  def walk
+    reg = FileRegistry.new
 
-    HANDLERS = {
-      'page' => Handlers::Page,
-      'page.{html,md,markdown,html.erb}' => Handlers::QuickPage,
-      'scss' => Handlers::SCSS,
-      '{jpeg,jpg,JPEG,JPG,png,PNG,gif,GIF}' => Handlers::Asset,
-      '{css,js}' => Handlers::Asset,
-      '{eot,svg,ttf,woff}' => Handlers::Asset,
-      'feed.rb' => Handlers::Feed,
-      'feed' => Handlers::Feed,
-    }
+    Dir.chdir @root_path
 
-    COPIERS = {
-      symlink: Copiers::Symlink,
-      copy: Copiers::Copy,
-      write: Copiers::Write,
-      scss: Copiers::SCSS,
-    }
+    HANDLERS.each do |ext, klass|
+      globber = File.join(root_path, '**', "*.#{ext}")
 
-    def initialize source, dest
-      @source = File.expand_path(source)
-      @dest = File.expand_path(dest)
-    end
+      Dir.glob(globber, File::FNM_CASEFOLD).each do |file|
+        handler = klass.new(@root_path, file)
 
-    def copiers
-      @copiers ||= Hash.new do |h, k|
-        if copier = COPIERS[k]
-          h[k] = copier.new(@source, @dest)
-        end
+        reg << handler
       end
     end
 
-    def files
-      all = []
-
-      context = RenderContext.new
-
-      HANDLERS.each do |ext, klass|
-
-        globber = File.join(@source, '**', "*.#{ext}")
-
-        Dir[globber].each do |file|
-          unless file =~ /\/[\._]/
-            handler = klass.new(file, @source, context)
-
-            all << handler
-          end
-        end
-      end
-
-      all
-    end
-
-    def copier_for_handler handler
-      copiers[Sitefs::copier_type_for_handler(handler)]
-    end
-
-    def copy_handler handler
-      if copier = copier_for_handler(handler)
-        copier.copy_handler handler
-      end
-    end
-
-    def copy_files
-      files.each do |file|
-        copy_handler file
-      end
-    end
-
+    reg
   end
+
 end

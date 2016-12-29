@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% if current_page && current_page.title %>
+    <title><%= current_page.title %> | Test Site</title>
+  <% else %>
+    <title>Test Site</title>
+  <% end %>
+  <%= yield :head %>
+</head>
+<body>
+  <div class="sidebar">
+  <ul class="tag-list">
+    <% public_tags.each do |tag| %>
+      <li class="tag">
+        <%= tag %>
+      </li>
+    <% end %>
+  </ul>
+  </div>
+
+  <div id="main">
+    <%= yield %>
+  </div>
+
+</body>
+</html>
