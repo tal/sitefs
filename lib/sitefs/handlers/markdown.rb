@@ -3,7 +3,7 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
     @source_file.gsub(/\.page.*$/, '.html')
   end
 
-  def url
+  def path
     File.join('', @source_file.gsub(/\.page.*$/, '').sub(@root_path, ''))
   end
 
@@ -64,8 +64,8 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
 
   def pages
     @pages ||= begin
-      page = Page.new
-      page.url = url
+      page = Page.new(path_helper)
+      page.path = path
       page.title = title
       page.subtitle = subtitle
       page.description = description

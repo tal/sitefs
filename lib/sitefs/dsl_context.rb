@@ -1,8 +1,20 @@
 class Sitefs::DslContext
-  attr_reader :root_path, :source_file, :_pages_to_render
-  def initialize root_path, source_file
-    @source_file, @root_path = source_file, root_path
+  attr_reader :_pages_to_render, :path_helper
+  def initialize path_helper
+    @path_helper = path_helper
     @_pages_to_render = []
+  end
+
+  def source_file
+    @path_helper.source_file
+  end
+
+  def path_for_href href
+    @path_helper.pathname_for href
+  end
+
+  def root_path
+    @path_helper.root_path
   end
 
   def _eval
@@ -22,8 +34,18 @@ class Sitefs::DslContext
     end
   end
 
+  def Page
+    puts 'in here'
+    Page
+  end
+
+  def new_page
+    Page.new path_helper
+  end
+
   def render page, with:, **args
-    page._rendering_template = with
+    puts @path_helper.full_path_for(with)
+    page._rendering_template = @path_helper.full_path_for(with)
     @_pages_to_render << page
   end
 end

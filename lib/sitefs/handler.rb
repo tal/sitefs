@@ -13,4 +13,8 @@ class Sitefs::Handler
   def pages
     []
   end
+
+  def path_helper
+    @path_helper ||= PathHelper.new(root_path, source_file)
+  end
 end

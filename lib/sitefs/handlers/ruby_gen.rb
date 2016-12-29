@@ -1,6 +1,6 @@
 class Sitefs::Handlers::RubyGen < Sitefs::Handler
   def dsl
-    @dsl ||= DslContext.new root_path, source_file
+    @dsl ||= DslContext.new path_helper
   end
 
   def pages
@@ -9,18 +9,8 @@ class Sitefs::Handlers::RubyGen < Sitefs::Handler
     end
   end
 
-  def relative_path path
-    File.expand_path(File.join(File.dirname(source_file), path))
-  end
-
-  def output_path_for url
-    path = relative_path url
-    path << '.html' unless path =~ /\.html$/
-    path
-  end
-
   def renderer_for page
-    content_path = relative_path(page._rendering_template)
+    content_path = page._rendering_template
     content_text = File.read(content_path)
 
     RendererPipeline.for(root_path: root_path, source_file: source_file, content_text: content_text)
@@ -28,7 +18,7 @@ class Sitefs::Handlers::RubyGen < Sitefs::Handler
 
   def file_actions registry
     pages.map do |page|
-      output_path = output_path_for page.url
+      output_path = page.expanded_path + '.html'
 
       FileAction.new path: output_path do
         renderer = renderer_for page

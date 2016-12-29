@@ -50,7 +50,7 @@ describe Handlers::Markdown do
   describe :page do
     subject { handler.pages.first }
 
-    it { expect(subject.url).to eq('/single-markdown') }
+    it { expect(subject.path).to eq('/single-markdown') }
     it { expect(subject.title).to eq('Title') }
     it { expect(subject.subtitle).to eq('Subtitle') }
     it { expect(subject.description).to eq('Body') }

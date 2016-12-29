@@ -11,6 +11,10 @@ class Sitefs::FileActionSet
     end
   end
 
+  def [] i
+    @file_actions[i]
+  end
+
   def call
     each(&:perform_action)
   end

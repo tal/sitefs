@@ -30,5 +30,20 @@ describe Handlers::RubyGen do
     end
   end # pages
 
+  describe 'paths' do
+    subject { handler.pages.map(&:path) }
+
+    it { expect(subject).to contain_exactly "/gallery/Screen Shot 2016-04-21 at 5.57.53 PM", "/gallery/Screen Shot 2016-04-25 at 2.06.46 PM", "/gallery/Screen Shot 2016-04-27 at 9.31.28 PM", "/gallery/index" }
+  end
+
+  describe :file_actions do
+    let(:registry) { FileRegistry.new.tap {|r| r << handler } }
+
+    subject { registry.gather_actions }
+
+    it { expect(subject.count).to be 4 }
+
+    it { expect(subject.first.path).to eq '/Users/tal/Projects/sitefs/inline-site/gallery/Screen Shot 2016-04-21 at 5.57.53 PM.html' }
+  end
 
 end
