@@ -6,6 +6,10 @@ class Sitefs::Handler
     @source_file = source_file
   end
 
+  def should_generate?
+    true
+  end
+
   def delay_generation
     false
   end

@@ -1,18 +1,20 @@
+FS_TEST_DIR = File.expand_path('../allieandtal.com', __FILE__)
+
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
 require 'sitefs'
 
 include Sitefs
 
-FS_TEST_DIR = File.expand_path('../inline-site', __FILE__)
+watcher = Watcher.new FS_TEST_DIR
 
-walker = Walker.new(FS_TEST_DIR)
+# sleep
 
-reg = walker.walk
-reg.gather_actions.each do |action|
-  puts "#{action.content_hash} - #{action.path}"
-  puts "should_write? #{action.should_write?}"
-  puts action.content
+# walker = Walker.new(FS_TEST_DIR)
 
-  action.perform_action
-end
+# reg = walker.walk
+# action_set = reg.gather_actions.call
+
+# if action_set.has_errors?
+#   abort('some files didn\'t work')
+# end

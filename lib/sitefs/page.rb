@@ -26,4 +26,8 @@ class Sitefs::Page
   def attributes
     @attributes ||= AttributeSet.new
   end
+
+  def [] key
+    attributes[key]
+  end
 end

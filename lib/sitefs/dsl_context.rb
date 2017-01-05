@@ -1,3 +1,6 @@
+# To make sure that inside of the DSLs you can import yaml files
+require 'yaml'
+
 class Sitefs::DslContext
   attr_reader :_pages_to_render, :path_helper
   def initialize path_helper
@@ -35,7 +38,6 @@ class Sitefs::DslContext
   end
 
   def Page
-    puts 'in here'
     Page
   end
 
@@ -44,7 +46,6 @@ class Sitefs::DslContext
   end
 
   def render page, with:, **args
-    puts @path_helper.full_path_for(with)
     page._rendering_template = @path_helper.full_path_for(with)
     @_pages_to_render << page
   end

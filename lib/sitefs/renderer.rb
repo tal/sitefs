@@ -44,6 +44,10 @@ module Sitefs
       render
     end
 
+    def title
+      current_page && current_page.title
+    end
+
     def method_missing name, *args, &blk
       if context.respond_to? name
         context.send(name, *args, &blk)

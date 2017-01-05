@@ -5,7 +5,9 @@ class Sitefs::Walker
   HANDLERS = {
     'page.{md,markdown}' => Handlers::Markdown,
     'page.rb' => Handlers::RubyGen,
+    'page.*erb' => Handlers::SingleErb,
     'tag-page.rb' => Handlers::TagPage,
+    'scss' => Handlers::Scss,
   }
 
   def initialize root_path
@@ -24,11 +26,22 @@ class Sitefs::Walker
       Dir.glob(globber, File::FNM_CASEFOLD).each do |file|
         handler = klass.new(@root_path, file)
 
-        reg << handler
+        reg << handler if handler.should_generate?
       end
     end
 
     reg
+  end
+
+  def file_matches? file
+    HANDLERS.each do |ext, klass|
+      globber = File.join(root_path, '**', "*.#{ext}")
+
+      # File.fnmatch("foo*", "food")
+      return true if Dir.glob(globber, File::FNM_CASEFOLD).include? file
+    end
+
+    return false
   end
 
 end

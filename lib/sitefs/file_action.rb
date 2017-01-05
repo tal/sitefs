@@ -1,13 +1,17 @@
 require 'digest/md5'
+require 'fileutils'
 
 class Sitefs::FileAction
   attr_reader :action, :path
+  attr_accessor :render_error
 
   def initialize action: :write, **args, &blk
     @action = action
     args.each do |k,v|
       instance_variable_set :"@#{k}", v
     end
+
+    @path = write_path_for @path
 
     if blk
       @content = blk
@@ -20,6 +24,10 @@ class Sitefs::FileAction
     end
 
     @content
+  end
+
+  def dirname
+    File.dirname path
   end
 
   def content_hash
@@ -36,9 +44,20 @@ class Sitefs::FileAction
     !destination_hash || (content_hash != destination_hash)
   end
 
+  def write_path_for path
+    return path unless path =~ /\.html$/
+
+    if path =~ /index\.html$/i
+      path
+    else
+      path.sub(/\.html$/, '/index.html')
+    end
+  end
+
   def perform_action
     case action
     when :write
+      FileUtils.mkdir_p dirname
       File.open(path, "w") { |file| file.write content } if should_write?
     end
   end
