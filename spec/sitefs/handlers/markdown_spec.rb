@@ -58,4 +58,17 @@ describe Handlers::Markdown do
     it { expect(subject.tags).to match_array ['test 12', 'oneword'] }
   end
 
+  context 'advanced features' do
+    let(:source) { File.join(FS_TEST_DIR, 'advanced-md.page.md') }
+
+    describe :output do
+      subject { handler.output }
+
+      context 'nil context' do
+        it {is_expected.to include_exactly_once('<pre class="highlight highlight-ruby"><code>')}
+        it {is_expected.to include_exactly_once('<a href="http://google.com">')}
+      end
+    end
+  end
+
 end

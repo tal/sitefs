@@ -43,7 +43,7 @@ describe Handlers::RubyGen do
 
     it { expect(subject.count).to be 4 }
 
-    it { expect(subject.first.path).to eq '/Users/tal/Projects/sitefs/inline-site/gallery/Screen Shot 2016-04-21 at 5.57.53 PM.html' }
+    it { expect(subject.first.path).to eq '/Users/tal/Projects/sitefs/inline-site/gallery/Screen Shot 2016-04-21 at 5.57.53 PM/index.html' }
   end
 
 end

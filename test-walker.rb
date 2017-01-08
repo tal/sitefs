@@ -1,4 +1,4 @@
-FS_TEST_DIR = File.expand_path('../allieandtal.com', __FILE__)
+FS_TEST_DIR = File.expand_path('../inline-site', __FILE__)
 
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 

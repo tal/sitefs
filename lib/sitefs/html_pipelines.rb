@@ -72,7 +72,9 @@ module Sitefs
       HTML::Pipeline.new(
           [
             HTML::Pipeline::MarkdownFilter,
-            TitleDeterminer
+            TitleDeterminer,
+            HTML::Pipeline::AutolinkFilter,
+            HTML::Pipeline::RougeFilter,
           ], {
           gfm: true,
         })
