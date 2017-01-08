@@ -57,9 +57,18 @@ class Sitefs::FileAction
   def perform_action
     case action
     when :write
-      FileUtils.mkdir_p dirname
-      File.open(path, "w") { |file| file.write content } if should_write?
+      if should_write?
+        log :generate, path
+        FileUtils.mkdir_p dirname
+        File.open(path, 'w') { |file| file.write content } 
+      else
+        log :identical, path
+      end
     end
+  end
+
+  def log type, path
+    puts "  #{type} - #{path}"
   end
 
   def to_s

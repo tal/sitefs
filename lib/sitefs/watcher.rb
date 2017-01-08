@@ -4,21 +4,24 @@ require 'webrick'
 class Sitefs::Watcher
   attr_reader :with_server, :walker, :root_path
 
-  def initialize root_path, with_server: 8050
+  def initialize root_path, quiet: false
     @with_server = with_server
-    @root_path = root_path
-
-    puts "Listening to #{root_path}"
+    @root_path = File.expand_path(root_path)
     
-    @listener = ::Listen.to(root_path) do |modified, added, removed|
+    @listener = ::Listen.to(@root_path) do |modified, added, removed|
       change modified, added, removed
     end
-    @listener.start
     
-    @walker = Walker.new root_path
-    generate
+    @walker = Walker.new @root_path
+  end
 
-    if @server_port = with_server
+  def start port: nil
+    puts "Listening to #{root_path}"
+
+    generate
+    @listener.start
+
+    if @port = port
       server_thread.join
     else
       sleep
@@ -27,8 +30,8 @@ class Sitefs::Watcher
 
   def server_thread
     @server_thread ||= Thread.new do
-      puts "about to start server on: :#{@server_port}"
-      server = WEBrick::HTTPServer.new(Port: @server_port, DocumentRoot: root_path)
+      puts "about to start server on: http://127.0.0.1:#{@port}"
+      server = WEBrick::HTTPServer.new(Port: @port, DocumentRoot: root_path)
       server.start
     end
   end
@@ -42,7 +45,7 @@ class Sitefs::Watcher
   end
   
   def generate
-    puts "About to generate"
+    puts "About to generate" 
     action_set.call
     @action_set = nil
     @registry = nil

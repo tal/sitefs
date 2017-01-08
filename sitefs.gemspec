@@ -26,16 +26,18 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency 'html-pipeline', '~> 2.4'
   spec.add_dependency 'html-pipeline-rouge_filter', '~> 1.0'
-  spec.add_dependency 'rinku', '~> 1.7.3'
-  spec.add_dependency 'github-markdown', '~> 0.6.9'
-  spec.add_dependency 'listen', '~> 3.0'
+  spec.add_dependency 'rinku', '~> 2.0'
+  spec.add_dependency 'github-markdown', '~> 0.6'
+  spec.add_dependency 'listen', '~> 3.1'
   spec.add_dependency 'sass', '~> 3.4'
   spec.add_dependency 'stamp', '~> 0.6'
   spec.add_dependency 'ratom', '~> 0.9'
   spec.add_dependency 'autoloaded', '~> 2'
+  spec.add_dependency 'slop', '~> 4'
 
-  spec.add_development_dependency "bundler", "~> 1.11"
+  spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "pry"

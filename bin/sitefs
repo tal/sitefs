@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "sitefs"
+require 'slop'
+
+include Sitefs
+
+opts = Slop.parse do |o|
+  o.integer '-p', '--port', 'custom port', default: 8050
+  o.bool '-o', '--only-once', 'only generate the files once, don\'t watch'
+
+  o.bool '-q', '--quiet', 'suppress output (quiet mode)'
+  o.on '--version', 'print the version' do
+    puts VERSION
+    exit
+  end
+end
+
+if opts.help?
+  puts opts
+  exit
+end
+
+unless root_path = opts.args.first
+  puts opts
+  exit
+end
+
+watcher = Watcher.new root_path
+
+if opts.only_once?
+  watcher.generate
+  exit
+end
+
+watcher.start port: opts[:port]
