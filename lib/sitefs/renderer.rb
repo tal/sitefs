@@ -31,11 +31,15 @@ module Sitefs
       RenderResult.new(text: __result, layout_type: @layout_type)
     end
 
-    def content_for key, &block
-      @_out_buf, _buf_was = '', @_out_buf
-      block.call
-      result = eval('@_out_buf', block.binding)
-      @_out_buf = _buf_was
+    def content_for key, txt=nil, &block
+      if block
+        @_out_buf, _buf_was = '', @_out_buf
+        block.call
+        result = eval('@_out_buf', block.binding)
+        @_out_buf = _buf_w
+      else
+        result = txt
+      end
 
       @context._set_content_for key, (result.strip)
     end
