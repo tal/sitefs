@@ -18,7 +18,7 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
 
   def markdown
     _read unless @markdown
-    @markdown.join("\n")
+    @markdown.join
   end
 
   def tags
