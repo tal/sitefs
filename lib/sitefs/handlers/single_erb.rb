@@ -24,6 +24,7 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
     @pages ||= begin
       page = Page.new path_helper
       page.tags << '_single'
+      page.published_at = File.birthtime(source_file)
       [page]
     end
   end

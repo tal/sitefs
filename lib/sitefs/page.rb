@@ -1,5 +1,5 @@
 class Sitefs::Page
-  attr_accessor :path, :title, :subtitle, :description, :published_at, :tags, :attributes
+  attr_accessor :path, :title, :subtitle, :description, :tags, :attributes
   attr_accessor :_rendering_template
 
   def initialize path_helper
@@ -25,6 +25,14 @@ class Sitefs::Page
 
   def attributes
     @attributes ||= AttributeSet.new
+  end
+
+  def published_at
+    attributes['published']
+  end
+
+  def published_at= date
+    attributes['published'] = date
   end
 
   def [] key

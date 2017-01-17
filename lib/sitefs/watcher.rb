@@ -7,18 +7,18 @@ class Sitefs::Watcher
   def initialize root_path, quiet: false
     @with_server = with_server
     @root_path = File.expand_path(root_path)
-    
+
     @listener = ::Listen.to(@root_path) do |modified, added, removed|
       change modified, added, removed
     end
-    
+
     @walker = Walker.new @root_path
   end
 
   def start port: nil
     puts "Listening to #{root_path}"
 
-    generate
+    action_set.call
     @listener.start
 
     if @port = port
@@ -37,18 +37,11 @@ class Sitefs::Watcher
   end
 
   def registry
-    @registry ||= walker.walk
+    walker.walk
   end
-  
+
   def action_set
-    @action_set ||= registry.gather_actions
-  end
-  
-  def generate
-    puts "About to generate" 
-    action_set.call
-    @action_set = nil
-    @registry = nil
+    registry.gather_actions
   end
 
   def change modified, added, removed
@@ -60,11 +53,13 @@ class Sitefs::Watcher
 
     all = (modified | added | removed)
 
+    as = action_set
+
     has_ungenerated_file = all.find do |path|
-      !action_set.includes_path?(path)
+      !as.includes_path?(path)
     end
 
-    generate if has_ungenerated_file
+    as.call if has_ungenerated_file
 
     puts ''
   end

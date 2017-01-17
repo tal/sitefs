@@ -69,7 +69,7 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
       page.title = title
       page.subtitle = subtitle
       page.description = description
-      page.published_at = attributes['published']
+      page.attributes = attributes
       page.tags = tags
       [page]
     end

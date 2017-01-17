@@ -1,4 +1,6 @@
 class Sitefs::AttributeSet
+  include Enumerable
+
   def initialize(attributes = {})
     @attributes = {}
 
@@ -14,7 +16,7 @@ class Sitefs::AttributeSet
   end
 
   def [] key
-    attr = @attributes[key]
+    attr = @attributes[key.to_s]
 
     attr && attr.value
   end
@@ -23,6 +25,12 @@ class Sitefs::AttributeSet
     attr = AttributeParser.new(key: key, raw_value: value)
     @attributes[key] = attr
     attr.value
+  end
+
+  def each
+    @attributes.each do |key, attr|
+      yield key, attr.value
+    end
   end
 
   def method_missing(meth, *args, &blk)
