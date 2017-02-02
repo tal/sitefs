@@ -13,7 +13,7 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
   end
 
   def attributes
-    @attributes ||= AttributeSet.new(config_strings)
+    @attributes ||= AttributeSet.from_yaml(config_strings.join)
   end
 
   def markdown
@@ -22,8 +22,10 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
   end
 
   def tags
-    @tags ||= config_strings.map {|str| str.match(/^\#(.+)$/) }.compact.map {|m| m[1]}
+    @tags ||= attributes['tags'] || []
   end
+
+  MARKER_REG = /^\-{3,}$/
 
   def _read
     @config_strings = []
@@ -32,13 +34,13 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
     in_config = false
 
     File.open(@source_file).each_with_index do |line, i|
-      if i === 0 && line =~ /^\-{3,}$/
+      if i === 0 && line =~ MARKER_REG
         in_config = true
         next
       end
 
       if in_config
-        if line =~ /^\-{3,}$/
+        if line =~ MARKER_REG
           in_config = false
           next
         else

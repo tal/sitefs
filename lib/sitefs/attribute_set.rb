@@ -1,30 +1,41 @@
 class Sitefs::AttributeSet
   include Enumerable
 
-  def initialize(attributes = {})
+  KEY_PARSERS = {
+    'published' => -> (value) do
+      if value.respond_to? :to_time
+        value.to_time
+      elsif value.is_a? Time
+        value
+      else
+        Time.new(value)
+      end
+    end,
+    'tags' => -> (value) do
+      if value.is_a?(String)
+        value.split(',')
+      else
+        value.to_a
+      end.map(&:strip)
+    end,
+  }
+
+  def initialize
     @attributes = {}
-
-    attributes.each {|attr| add_attribute attr}
-  end
-
-  def add_attribute attribute
-    if !attribute.is_a?(AttributeParser)
-      attribute = AttributeParser.from_str(attribute)
-    end
-
-    attribute && @attributes[attribute.key] = attribute
   end
 
   def [] key
-    attr = @attributes[key.to_s]
-
-    attr && attr.value
+    @attributes[key.to_s]
   end
 
   def []= key, value
-    attr = AttributeParser.new(key: key, raw_value: value)
-    @attributes[key] = attr
-    attr.value
+    key = key.to_s
+
+    if parser = KEY_PARSERS[key]
+      @attributes[key] = parser.call(value)
+    else
+      @attributes[key] = value
+    end
   end
 
   def each
@@ -44,4 +55,27 @@ class Sitefs::AttributeSet
       super
     end
   end
+
+  class << self
+
+    def from_yaml lines
+      if lines.is_a? Array
+        lines = lines.join
+      end
+
+      data = YAML.load(lines)
+
+      set = new
+
+      data.each do |key, val|
+        set[key] = val
+      end
+
+      set
+    end
+
+  end
 end
+
+
+

@@ -1,7 +1,8 @@
 ---
-#test 12
-#oneword
-@published(2016-12-22 12:32pm)
+tags:
+- test 12
+- oneword
+published: 2016-12-22 12:32pm
 ---
 
 # Testing advanced features
