@@ -31,7 +31,7 @@ class Sitefs::DslContext
 
   def files_like matcher
     if matcher.is_a?(Regexp)
-      Dir['**/*'].grep(matcher)
+      Dir[File.join(current_dir,'**/*')].grep(matcher)
     else
       Dir.glob(File.join(current_dir, matcher), File::FNM_CASEFOLD)
     end
@@ -48,5 +48,6 @@ class Sitefs::DslContext
   def render page, with:, **args
     page._rendering_template = @path_helper.full_path_for(with)
     @_pages_to_render << page
+    page
   end
 end

@@ -19,8 +19,8 @@ class Sitefs::RenderContext
     @registry ? @registry.public_tags : []
   end
 
-  def pages_tagged(tag_str)
-    @registry ? @registry.pages_tagged(tag_str) : []
+  def pages_tagged tag_str, all: false
+    @registry ? @registry.pages_tagged(tag_str, all: all) : []
   end
 
   class << self

@@ -28,14 +28,22 @@ class Sitefs::FileRegistry
     end.compact
   end
 
-  def pages_tagged tag_str
+  def pages_tagged tag_str, all: false
     pages.select do |page|
-      page.tags.include? tag_str
+      is_tagged = page.tags.include? tag_str
+
+      if all
+        is_tagged
+      else
+        is_tagged && page.published_at
+      end
+    end.sort_by do |page|
+      page.published_at || Time.now
     end
   end
 
   def public_tags
-    pages.collect(&:public_tags).flatten.uniq
+    pages.flat_map(&:public_tags).uniq
   end
 
   def gather_actions

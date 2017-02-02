@@ -2,6 +2,7 @@ require 'sitefs/version'
 
 require 'stamp'
 require 'autoloaded'
+require 'yaml'
 
 %w{
 }.each do |name|
