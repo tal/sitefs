@@ -65,6 +65,11 @@ class Sitefs::AttributeSet
 
       data = YAML.load(lines)
 
+      unless data
+        STDERR.puts "Error loading yaml attributes from: #{lines.inspect}"
+        data = {} # so it doesnt error further down
+      end
+
       set = new
 
       data.each do |key, val|
