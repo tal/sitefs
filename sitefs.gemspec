@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'html-pipeline', '~> 2.4'
+  spec.add_dependency 'html-pipeline', '~> 2.5'
   spec.add_dependency 'html-pipeline-rouge_filter', '~> 1.0'
   spec.add_dependency 'rinku', '~> 2.0'
   spec.add_dependency 'github-markdown', '~> 0.6'
@@ -37,8 +37,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'autoloaded', '~> 2'
   spec.add_dependency 'slop', '~> 4'
 
+  spec.add_dependency 'aws-sdk', '~> 2'
+
   spec.add_development_dependency "bundler", "~> 1.13"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake", "~> 12"
   spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "pry"
 end

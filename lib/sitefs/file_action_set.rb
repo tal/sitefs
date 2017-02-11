@@ -37,6 +37,7 @@ class Sitefs::FileActionSet
       rescue Exception => e
         STDERR.puts "Error: file(#{file_action.path})"
         STDERR.puts e
+
         file_action.render_error = e
         @errored_on << file_action
       end

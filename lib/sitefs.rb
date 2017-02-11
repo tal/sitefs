@@ -3,6 +3,7 @@ require 'sitefs/version'
 require 'stamp'
 require 'autoloaded'
 require 'yaml'
+require 'aws-sdk'
 
 %w{
 }.each do |name|

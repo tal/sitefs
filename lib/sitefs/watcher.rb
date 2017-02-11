@@ -4,9 +4,10 @@ require 'webrick'
 class Sitefs::Watcher
   attr_reader :with_server, :walker, :root_path
 
-  def initialize root_path, quiet: false
+  def initialize config
+    @config = config
     @with_server = with_server
-    @root_path = File.expand_path(root_path)
+    @root_path = File.expand_path(config.root_path)
 
     @listener = ::Listen.to(@root_path) do |modified, added, removed|
       change modified, added, removed

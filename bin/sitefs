@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
+require 'yaml'
 require "sitefs"
 require 'slop'
 
@@ -8,13 +9,25 @@ include Sitefs
 
 opts = Slop.parse do |o|
   o.integer '-p', '--port', 'custom port', default: 8050
-  o.bool '-o', '--only-once', 'only generate the files once, don\'t watch'
+  o.bool '-o', '--only-once', "only generate the files once, don't watch"
 
   o.bool '-q', '--quiet', 'suppress output (quiet mode)'
+  o.string '--config', 'location of config file (default .sitefsconfg.yml)', default: '.sitefsconfig.yml'
+
   o.on '--version', 'print the version' do
     puts VERSION
     exit
   end
+end
+
+unless File.exist?(opts[:config])
+  abort "No config file found at #{opts[:config]}"
+end
+
+config = CommandConfig.from_file(opts[:config])
+
+unless config
+  abort "Invalid config file found at #{opts[:config]}"
 end
 
 if opts.help?
@@ -22,12 +35,14 @@ if opts.help?
   exit
 end
 
-unless root_path = opts.args.first
+unless root_path = opts.args.first || config.root_path
   puts opts
   exit
 end
 
-watcher = Watcher.new root_path
+config.root_path = root_path
+
+watcher = Watcher.new config
 
 if opts.only_once?
   watcher.generate
