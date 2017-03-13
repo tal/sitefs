@@ -1,18 +1,20 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
+require 'bundler/setup'
 require 'yaml'
-require "sitefs"
+require 'sitefs'
 require 'slop'
 
 include Sitefs
 
 opts = Slop.parse do |o|
   o.integer '-p', '--port', 'custom port', default: 8050
-  o.bool '-o', '--only-once', "only generate the files once, don't watch"
 
   o.bool '-q', '--quiet', 'suppress output (quiet mode)'
-  o.string '--config', 'location of config file (default .sitefsconfg.yml)', default: '.sitefsconfig.yml'
+  o.string '--config', 'location of config file (default .sitefs-config.yml)', default: '.sitefs-config.yml'
+  o.bool '--clean-manifest', 'remove the manifest file, forces all files to re-upload and removes ability to clean currently generated files'
+  o.bool '-h', '--help', 'shows this message'
+  o.bool '-f', '--force', 'forces generation or upload even if identical'
 
   o.on '--version', 'print the version' do
     puts VERSION
@@ -35,18 +37,51 @@ if opts.help?
   exit
 end
 
-unless root_path = opts.args.first || config.root_path
-  puts opts
+if opts.clean_manifest?
+  config.manifest.clean!
+  puts 'Cleaning manifest'
   exit
+end
+
+config.port = opts[:port]
+config.quiet = opts.quiet?
+config.force = opts.force?
+
+possible_actions = %w{clean watch build upload}
+
+args = opts.args.dup
+
+if possible_actions.include?(args.first)
+  action = args.shift
+else
+  action = 'watch'
+end
+
+root_path = args.shift || config.root_path
+
+unless root_path
+  STDERR.puts 'no path specified in config or params'
+  STDERR.puts opts
+  abort
+end
+
+unless args.empty?
+  STDERR.puts 'too many arguments passed'
+  STDERR.puts opts
+  abort
 end
 
 config.root_path = root_path
 
-watcher = Watcher.new config
+walker = Walker.new config
 
-if opts.only_once?
-  watcher.generate
-  exit
+case action
+when 'build'
+  walker.run :write
+when 'watch'
+  walker.watcher.start
+when 'upload'
+  walker.run :upload
+when 'clean'
+  config.manifest.delete_generated
 end
-
-watcher.start port: opts[:port]

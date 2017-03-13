@@ -1,6 +1,6 @@
 class Sitefs::Handlers::Markdown < Sitefs::Handler
   def output_path
-    @source_file.gsub(/\.page.*$/, '.html')
+    @source_file.sub(/\.page.*$/, '.html').sub(root_path, '')
   end
 
   def path

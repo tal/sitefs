@@ -30,13 +30,16 @@ class Sitefs::FileActionSet
     output_paths.include? path
   end
 
-  def call
+  def call config, action
+
     each do |file_action|
       begin
-        file_action.perform_action
+        file_action.perform_action config, action
       rescue Exception => e
-        STDERR.puts "Error: file(#{file_action.path})"
+        STDERR.puts "Error: file(#{file_action.inspect})"
         STDERR.puts e
+
+        raise e
 
         file_action.render_error = e
         @errored_on << file_action

@@ -29,16 +29,16 @@ class Sitefs::Handlers::Scss < Sitefs::Handler
   #   true
   # end
 
-  def should_generate?
+  def should_generate? config
     File.basename(source_file)[0] != '_'
   end
 
   def output_path
-    source_file.sub(/\.scss$/, '.css')
+    source_file.sub(/\.scss$/, '.css').sub(root_path, '')
   end
 
   def output_pathname
-    File.join('', output_path.sub(root_path, ''))
+    File.join('', output_path)
   end
 
   def sourcemap_output_pathname

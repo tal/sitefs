@@ -19,6 +19,7 @@ class Sitefs::Handlers::RubyGen < Sitefs::Handler
   def file_actions registry
     pages.map do |page|
       output_path = page.expanded_path + '.html'
+      output_path.sub!(root_path, '')
 
       FileAction.new path: output_path do
         renderer = renderer_for page

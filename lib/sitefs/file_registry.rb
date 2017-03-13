@@ -38,7 +38,7 @@ class Sitefs::FileRegistry
         is_tagged && page.published_at
       end
     end.sort_by do |page|
-      page.published_at || Time.now
+      [page.published_at || Time.now, page.title]
     end
   end
 

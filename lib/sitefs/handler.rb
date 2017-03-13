@@ -6,7 +6,7 @@ class Sitefs::Handler
     @source_file = source_file
   end
 
-  def should_generate?
+  def should_generate? config
     true
   end
 
@@ -21,4 +21,9 @@ class Sitefs::Handler
   def path_helper
     @path_helper ||= PathHelper.new(root_path, source_file)
   end
+
+  def file_actions registry
+    []
+  end
+
 end

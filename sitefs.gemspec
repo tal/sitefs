@@ -36,6 +36,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ratom', '~> 0.9'
   spec.add_dependency 'autoloaded', '~> 2'
   spec.add_dependency 'slop', '~> 4'
+  spec.add_dependency 'diffy', '~> 3'
+  spec.add_dependency 'mime-types', '~> 3'
 
   spec.add_dependency 'aws-sdk', '~> 2'
 

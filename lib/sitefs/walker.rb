@@ -1,6 +1,32 @@
+require 'find'
+
+module Sitefs::HashMaps
+  refine Hash do
+    def map_keys &blk
+      inject({}) do |h, (k,v)|
+        h[blk.call(k)] = v
+        h
+      end
+    end
+
+    def map_values &blk
+      inject({}) do |h, (k,v)|
+        h[k] = blk.call(v)
+        h
+      end
+    end
+
+    def find_value &blk
+      val = find(&blk)
+      val[1] if val
+    end
+  end
+end
+
 # Class used for walking a source directory and discovering what files need to be mapped
 class Sitefs::Walker
-  attr_reader :root_path
+  using HashMaps
+  attr_reader :config
 
   HANDLERS = {
     'page.{md,markdown}' => Handlers::Markdown,
@@ -8,40 +34,61 @@ class Sitefs::Walker
     'page.*erb' => Handlers::SingleErb,
     'tag-page.rb' => Handlers::TagPage,
     'scss' => Handlers::Scss,
+    '*' => Handlers::Noop,
   }
 
-  def initialize root_path
-    # Ensure the source always has a trailing slash
-    @root_path = File.join(root_path, '')
+  IGNORE_MATCHERS = [
+    '**/node_modules',
+    '**/.sass-cache',
+    '**/.git',
+    '**/.DS_Store',
+  ]
+
+  def initialize config
+    @config = config
+  end
+
+  def root_path
+    @config.root_path
   end
 
   def walk
     reg = FileRegistry.new
 
-    Dir.chdir @root_path
+    Dir.chdir root_path
 
-    HANDLERS.each do |ext, klass|
-      globber = File.join(root_path, '**', "*.#{ext}")
+    ignore_matchers = IGNORE_MATCHERS | config.ignore_patterns
+    handlers = HANDLERS.map_keys {|ext| File.join('**', "*.#{ext}") }
+    match_args = File::FNM_CASEFOLD | File::FNM_EXTGLOB | File::FNM_PATHNAME
 
-      Dir.glob(globber, File::FNM_CASEFOLD).each do |file|
-        handler = klass.new(@root_path, file)
+    Find.find root_path do |full_path|
+      path = full_path.sub(root_path, '')
 
-        reg << handler if handler.should_generate?
+      if ignore_matchers.find {|pattern| File.fnmatch(pattern, path, match_args)}
+        Find.prune if File.directory?(path)
+        next
+      end
+
+      if handler_class = handlers.find_value { |pattern, handler_class| File.fnmatch(pattern, path, match_args)}
+        handler = handler_class.new(root_path, full_path)
+
+
+        reg << handler if handler.should_generate?(config)
       end
     end
 
     reg
   end
 
-  def file_matches? file
-    HANDLERS.each do |ext, klass|
-      globber = File.join(root_path, '**', "*.#{ext}")
-
-      # File.fnmatch("foo*", "food")
-      return true if Dir.glob(globber, File::FNM_CASEFOLD).include? file
-    end
-
-    return false
+  def watcher
+    Watcher.new self
   end
 
+  def action_set
+    walk.gather_actions
+  end
+
+  def run action
+    action_set.call @config, action
+  end
 end

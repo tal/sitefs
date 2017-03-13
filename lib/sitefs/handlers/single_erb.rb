@@ -12,7 +12,7 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
   end
 
   def output_path
-    source_file.sub(/\.page(\..*)?\.erb$/,'\1')
+    source_file.sub(/\.page(\..*)?\.erb$/,'\1').sub(root_path, '')
   end
 
   def renderer

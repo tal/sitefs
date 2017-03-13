@@ -2,24 +2,29 @@ require 'listen'
 require 'webrick'
 
 class Sitefs::Watcher
-  attr_reader :with_server, :walker, :root_path
+  attr_reader :with_server, :walker
 
-  def initialize config
-    @config = config
-    @with_server = with_server
-    @root_path = File.expand_path(config.root_path)
-
-    @listener = ::Listen.to(@root_path) do |modified, added, removed|
+  def initialize walker
+    @config = walker.config
+    @listener = ::Listen.to(root_path) do |modified, added, removed|
       change modified, added, removed
     end
 
-    @walker = Walker.new @root_path
+    @walker = walker
   end
 
-  def start port: nil
+  def root_path
+    @config.root_path
+  end
+
+  def port
+    @config.port
+  end
+
+  def start
     puts "Listening to #{root_path}"
 
-    action_set.call
+    action_set.call @config, :write
     @listener.start
 
     if @port = port
@@ -32,7 +37,19 @@ class Sitefs::Watcher
   def server_thread
     @server_thread ||= Thread.new do
       puts "about to start server on: http://127.0.0.1:#{@port}"
-      server = WEBrick::HTTPServer.new(Port: @port, DocumentRoot: root_path)
+      webrick_config = WEBrick::Config::FileHandler.merge({
+        :FancyIndexing     => true,
+        :NondisclosureName => [
+          ".ht*", "~*",
+        ],
+      })
+
+      server = WEBrick::HTTPServer.new(
+        Port: @port,
+        DocumentRoot: root_path,
+        SitefsConfig: @config,
+       ).tap { |o| o.unmount("") }
+      server.mount('', Servlet, root_path, webrick_config )
       server.start
     end
   end
@@ -60,7 +77,7 @@ class Sitefs::Watcher
       !as.includes_path?(path)
     end
 
-    as.call if has_ungenerated_file
+    as.call(walker.config, :write) if has_ungenerated_file
 
     puts ''
   end
