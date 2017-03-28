@@ -37,10 +37,6 @@ class Sitefs::DslContext
     end
   end
 
-  def Page
-    Page
-  end
-
   def new_page
     Page.new path_helper
   end

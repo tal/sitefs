@@ -9,4 +9,5 @@ sitefs.com-dist/
 allieandtal.com/
 allieandtal.com-dist/
 index.html
-.sitefsconfig.yml
+.sitefs-config.yml
+pkg/

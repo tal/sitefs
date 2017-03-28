@@ -22,13 +22,16 @@ class Sitefs::FileRegistry
     @handlers.select {|h| h.delay_generation }
   end
 
-  def pages
+   def pages
     @pages ||= handlers.flat_map do |h|
       h.pages
     end.compact
   end
 
   def pages_tagged tag_str, all: false
+    # If it hasnt been published always sort by the same
+    default_time = Time.now
+
     pages.select do |page|
       is_tagged = page.tags.include? tag_str
 
@@ -38,7 +41,7 @@ class Sitefs::FileRegistry
         is_tagged && page.published_at
       end
     end.sort_by do |page|
-      [page.published_at || Time.now, page.title]
+      [page.published_at || default_time, page.title]
     end
   end
 

@@ -37,7 +37,7 @@ module Sitefs
         return doc
       end
 
-      doc.search("img").each do |img|
+      doc.search('img').each do |img|
         next if img['src'].nil?
 
         src = img['src'].strip
@@ -51,7 +51,7 @@ module Sitefs
           src = URI.join(base_path, src).to_s
         end
 
-        img["src"] = src
+        img['src'] = src
       end
       doc
 
@@ -65,6 +65,7 @@ module Sitefs
     def content
       HTML::Pipeline.new([
          TitleDeterminer,
+         HTML::Pipeline::RougeFilter,
        ])
     end
 

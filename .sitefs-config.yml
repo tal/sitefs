@@ -1,6 +1,0 @@
-aws_access_key_id: AKIAISK6O5RL75DNNCPQ
-aws_secret_access_key: 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
-aws_region: us-east-1
-aws_s3_bucket: sitefs.com
-root_path: sitefs.com
-index_format: aws

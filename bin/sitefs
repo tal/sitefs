@@ -11,7 +11,7 @@ opts = Slop.parse do |o|
   o.integer '-p', '--port', 'custom port', default: 8050
 
   o.bool '-q', '--quiet', 'suppress output (quiet mode)'
-  o.string '--config', 'location of config file (default .sitefs-config.yml)', default: '.sitefs-config.yml'
+  o.string '--config', 'location of config file (default .sitefs-config.yml)'
   o.bool '--clean-manifest', 'remove the manifest file, forces all files to re-upload and removes ability to clean currently generated files'
   o.bool '-h', '--help', 'shows this message'
   o.bool '-f', '--force', 'forces generation or upload even if identical'
@@ -22,11 +22,19 @@ opts = Slop.parse do |o|
   end
 end
 
-unless File.exist?(opts[:config])
-  abort "No config file found at #{opts[:config]}"
-end
 
-config = CommandConfig.from_file(opts[:config])
+if opts[:config]
+  unless File.exist?(opts[:config])
+    abort "No config file found at #{opts[:config]}"
+  end
+
+  config = CommandConfig.from_file(opts[:config])
+elsif File.exist?('.sitefs-config.yml')
+  config = CommandConfig.from_file('.sitefs-config.yml')
+else
+  # If no defined config or default config then use default values defined by class
+  config = CommandConfig.new({})
+end
 
 unless config
   abort "Invalid config file found at #{opts[:config]}"

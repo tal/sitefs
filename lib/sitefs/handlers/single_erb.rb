@@ -15,15 +15,17 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
     source_file.sub(/\.page(\..*)?\.erb$/,'\1').sub(root_path, '')
   end
 
+  def content_text
+    @content_text ||= File.read(source_file)
+  end
+
   def renderer
-    content_text = File.read(source_file)
     RendererPipeline.for(root_path: root_path, source_file: source_file, content_text: content_text)
   end
 
   def pages
     @pages ||= begin
-      page = Page.new path_helper
-      page.tags << '_single'
+      page = Page.new path_helper, attributes
       page.published_at = File.birthtime(source_file)
       [page]
     end
@@ -33,13 +35,15 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
     pages.first
   end
 
-  def file_actions registry
-    pages.map do |page|
-      FileAction.new path: output_path do
-        context = RenderContext.new(registry, current_page: page)
+  def html_pipeline_result
+    @html_pipeline_result ||= HtmlPipelines.content.call(content_text)
+  end
 
-        renderer.render context
-      end
+  def file_actions registry
+    FileAction.new path: output_path do
+      context = RenderContext.new(registry, current_page: page)
+
+      renderer.render context
     end
   end
 end

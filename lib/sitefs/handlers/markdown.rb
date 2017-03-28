@@ -12,17 +12,9 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
     @config_strings
   end
 
-  def attributes
-    @attributes ||= AttributeSet.from_yaml(config_strings.join)
-  end
-
   def markdown
     _read unless @markdown
     @markdown.join
-  end
-
-  def tags
-    @tags ||= attributes['tags'] || []
   end
 
   MARKER_REG = /^\-{3,}$/
@@ -52,27 +44,19 @@ class Sitefs::Handlers::Markdown < Sitefs::Handler
     end
   end
 
-  def title
-    attributes['title'] || html_pipeline_result[:title]
-  end
-
-  def subtitle
-    attributes['subtitle'] || html_pipeline_result[:subtitle]
-  end
-
-  def description
-    attributes['description'] || html_pipeline_result[:description]
+  def attributes
+    @attributes ||= AttributeSet.from_yaml(config_strings.join).tap do |attrs|
+      attrs['tags'] ||= []
+      attrs['title'] ||= html_pipeline_result[:title]
+      attrs['subtitle'] ||= html_pipeline_result[:subtitle]
+      attrs['description'] ||= html_pipeline_result[:subtitle]
+     end
   end
 
   def pages
     @pages ||= begin
-      page = Page.new(path_helper)
+      page = Page.new(path_helper, attributes)
       page.path = path
-      page.title = title
-      page.subtitle = subtitle
-      page.description = description
-      page.attributes = attributes
-      page.tags = tags
       [page]
     end
   end

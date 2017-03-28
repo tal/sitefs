@@ -1,8 +1,19 @@
 class Sitefs::Page
-  attr_accessor :path, :title, :subtitle, :description, :tags, :attributes
+  class << self
+    def attribute_key *keys
+      keys.each do |key|
+        define_method(key) { attributes[key.to_s] }
+        define_method("#{key}=") { |v| attributes[key.to_s] = v }
+      end
+    end
+  end
+
+  attr_accessor :path, :attributes
+  attribute_key :title, :subtitle, :description, :tags, :published_at
   attr_accessor :_rendering_template
 
-  def initialize path_helper
+  def initialize path_helper, attributes = nil
+    @attributes = attributes
     @path_helper = path_helper
     @tags = []
   end
@@ -25,14 +36,6 @@ class Sitefs::Page
 
   def attributes
     @attributes ||= AttributeSet.new
-  end
-
-  def published_at
-    attributes['published']
-  end
-
-  def published_at= date
-    attributes['published'] = date
   end
 
   def [] key

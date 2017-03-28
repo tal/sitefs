@@ -26,4 +26,21 @@ class Sitefs::Handler
     []
   end
 
+  def tags
+    []
+  end
+
+  def html_pipeline_result
+    @html_pipeline_result ||= {}
+  end
+
+  def attributes
+    @attributes ||= AttributeSet.new.tap do |attrs|
+      attrs['tags'] ||= tags
+      attrs['title'] ||= html_pipeline_result[:title]
+      attrs['subtitle'] ||= html_pipeline_result[:subtitle]
+      attrs['description'] ||= html_pipeline_result[:subtitle]
+    end
+  end
+
 end

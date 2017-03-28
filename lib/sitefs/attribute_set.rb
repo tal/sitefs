@@ -1,6 +1,10 @@
 class Sitefs::AttributeSet
   include Enumerable
 
+  KEY_ALIASES = {
+    'published_at' => 'published',
+  }
+
   KEY_PARSERS = {
     'published' => -> (value) do
       if value.respond_to? :to_time
@@ -20,16 +24,25 @@ class Sitefs::AttributeSet
     end,
   }
 
-  def initialize
+  def initialize setup = {}
     @attributes = {}
+
+    setup.each do |key, val|
+      self[key] = val
+    end
+  end
+
+  def normalize_key key
+    k = key.to_s
+    KEY_ALIASES[k] || k
   end
 
   def [] key
-    @attributes[key.to_s]
+    @attributes[normalize_key(key)]
   end
 
   def []= key, value
-    key = key.to_s
+    key = normalize_key(key)
 
     if parser = KEY_PARSERS[key]
       @attributes[key] = parser.call(value)
@@ -70,13 +83,7 @@ class Sitefs::AttributeSet
         data = {} # so it doesnt error further down
       end
 
-      set = new
-
-      data.each do |key, val|
-        set[key] = val
-      end
-
-      set
+      new(data)
     end
 
   end

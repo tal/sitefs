@@ -57,7 +57,10 @@ module Sitefs
     def delete_generated
       @manifest.each do |path, file|
         if file[:'generated_at']
-          File.delete File.join(@root_path, path.to_s)
+          full_path = File.join(@root_path, path.to_s)
+          if File.exist? full_path
+            File.delete full_path
+          end
           file[:'generated_at'] = nil
           puts "Deleting: #{path}"
         end
