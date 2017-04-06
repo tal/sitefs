@@ -72,6 +72,8 @@ class Sitefs::AttributeSet
   class << self
 
     def from_yaml lines
+      return new if lines.empty?
+
       if lines.is_a? Array
         lines = lines.join
       end
