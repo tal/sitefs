@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sitefs (1.0.0.beta1)
+    sitefs (1.0.0.beta2)
       autoloaded (~> 2)
       aws-sdk (~> 2)
       diffy (~> 3)
