@@ -25,7 +25,9 @@ class Sitefs::AttributeSet
   }
 
   def initialize setup = {}
-    @attributes = {}
+    @attributes = {
+      'tags' => [],
+    }
 
     setup.each do |key, val|
       self[key] = val

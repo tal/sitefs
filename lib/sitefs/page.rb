@@ -15,7 +15,6 @@ class Sitefs::Page
   def initialize path_helper, attributes = nil
     @attributes = attributes
     @path_helper = path_helper
-    @tags = []
   end
 
   def public_tags
