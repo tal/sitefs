@@ -24,6 +24,8 @@ class Sitefs::RenderContext
   end
 
   class << self
+    # Exists so that if there's no render context all the method calls can still
+    # work see Renderer#method_missing
     def nil
       @nil ||= new(nil)
     end

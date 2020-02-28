@@ -40,8 +40,10 @@ class Sitefs::Walker
   IGNORE_MATCHERS = [
     '**/node_modules',
     '**/.sass-cache',
+    '**/.sass-cache/**/*.scssc',
     '**/.git',
     '**/.DS_Store',
+    "**/#{Sitefs::MANIFEST_FILENAME}"
   ]
 
   def initialize config
@@ -52,26 +54,35 @@ class Sitefs::Walker
     @config.root_path
   end
 
+  def ignore_matchers
+    IGNORE_MATCHERS | config.ignore_patterns
+  end
+
+  def match_args
+    match_args = File::FNM_CASEFOLD | File::FNM_EXTGLOB | File::FNM_PATHNAME | File::FNM_DOTMATCH
+  end
+
+  def path_should_be_ignored path
+    ignore_matchers.find {|pattern| File.fnmatch(pattern, path, match_args)}
+  end
+
   def walk
     reg = FileRegistry.new
 
     Dir.chdir root_path
 
-    ignore_matchers = IGNORE_MATCHERS | config.ignore_patterns
     handlers = HANDLERS.map_keys {|ext| File.join('**', "*.#{ext}") }
-    match_args = File::FNM_CASEFOLD | File::FNM_EXTGLOB | File::FNM_PATHNAME
 
     Find.find root_path do |full_path|
       path = full_path.sub(root_path, '')
 
-      if ignore_matchers.find {|pattern| File.fnmatch(pattern, path, match_args)}
+      if path_should_be_ignored(path)
         Find.prune if File.directory?(path)
         next
       end
 
       if handler_class = handlers.find_value { |pattern, handler_class| File.fnmatch(pattern, path, match_args)}
         handler = handler_class.new(root_path, full_path)
-
 
         reg << handler if handler.should_generate?(config)
       end

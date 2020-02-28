@@ -15,7 +15,7 @@ class Sitefs::PathHelper
 
     dir = File.dirname source_file
 
-    File.expand_path(href, dir).sub(root_path, '')
+    File.expand_path(href, dir).sub(root_path, '').sub(/index\.html?$/, '')
   end
 
   def min_href_for path

@@ -26,6 +26,7 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
   def pages
     @pages ||= begin
       page = Page.new path_helper, attributes
+      page.href = path_helper.min_href_for output_path
       page.published_at = File.birthtime(source_file)
       [page]
     end

@@ -37,6 +37,15 @@ class Sitefs::FileAction
     type
   end
 
+  def content_causes_error?
+    begin
+      content
+      nil
+    rescue => error
+      error
+    end
+  end
+
   def content
     if @content.respond_to?(:call)
       @content = @content.call
@@ -123,7 +132,11 @@ class Sitefs::FileAction
 
     case action
     when :write
-      if should_write? config, action, path
+      if error = content_causes_error?
+        log :exception, path
+        puts error.message
+        puts error.backtrace
+      elsif should_write? config, action, path
         log :generate, path
         FileUtils.mkdir_p dirname
         File.open(path, 'w') { |file| file.write content }

@@ -25,8 +25,6 @@ class Sitefs::FileActionSet
   end
 
   def includes_path? path
-    path = File.expand_path(path)
-
     output_paths.include? path
   end
 

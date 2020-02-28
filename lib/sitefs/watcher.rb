@@ -63,13 +63,14 @@ class Sitefs::Watcher
   end
 
   def change modified, added, removed
-    puts "Change detected:"
 
-    modified.each {|f| puts "  modified: #{f}"}
-    added.each {|f| puts "  added: #{f}"}
-    removed.each {|f| puts "  removed: #{f}"}
+    modified = modified.map{|f| f.sub(root_path, '')}.select{|f| !walker.path_should_be_ignored(f)}
+    added = added.map{|f| f.sub(root_path, '')}.select{|f| !walker.path_should_be_ignored(f)}
+    removed = removed.map{|f| f.sub(root_path, '')}.select{|f| !walker.path_should_be_ignored(f)}
 
     all = (modified | added | removed)
+
+    return if all.empty?
 
     as = action_set
 
@@ -77,7 +78,14 @@ class Sitefs::Watcher
       !as.includes_path?(path)
     end
 
-    as.call(walker.config, :write) if has_ungenerated_file
+    if has_ungenerated_file
+      puts "Change detected:"
+      modified.each {|f| puts "  modified: #{f}"}
+      added.each {|f| puts "  added: #{f}"}
+      removed.each {|f| puts "  removed: #{f}"}
+      puts "Perform actions: "
+      as.call(walker.config, :write)
+    end
 
     puts ''
   end
