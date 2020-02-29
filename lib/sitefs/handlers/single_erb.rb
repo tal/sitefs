@@ -29,7 +29,7 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
       page.href = path_helper.min_href_for output_path
       begin
         page.published_at = File.birthtime(source_file)
-      rescue NotImplemenredError
+      rescue NotImplementedError
       end
       [page]
     end
