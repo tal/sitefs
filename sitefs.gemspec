@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'html-pipeline-rouge_filter', '~> 1.0'
   spec.add_dependency 'rinku', '~> 2.0'
   spec.add_dependency 'github-markdown', '~> 0.6'
+  spec.add_dependency 'commonmarker', '~> 0.21'
   spec.add_dependency 'listen', '~> 3.1'
   spec.add_dependency 'sass', '~> 3.4'
   spec.add_dependency 'stamp', '~> 0.6'
@@ -41,6 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk', '~> 2'
 
   spec.add_development_dependency "bundler", "~> 1.13"
-  spec.add_development_dependency "rake", "~> 12"
+  spec.add_development_dependency "rake", "~> 13"
   spec.add_development_dependency "rspec", "~> 3.0"
 end

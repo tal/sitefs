@@ -28,7 +28,7 @@ class Sitefs::Handlers::SingleErb < Sitefs::Handler
       page = Page.new path_helper, attributes
       page.href = path_helper.min_href_for output_path
       begin
-        page.published_at = File.birthtime(source_file)
+        page.published_at = File.birthtime(source_file) # this isnt available on mac
       rescue NotImplementedError
       end
       [page]
