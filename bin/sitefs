@@ -8,7 +8,7 @@ require File.expand_path(File.join(__dir__, '../lib/sitefs'))
 include Sitefs
 
 opts = Slop.parse do |o|
-  o.banner = "usage: bin/sitefs build|watch|upload [options]"
+  o.banner = "usage: sitefs build|watch|upload [options]"
   o.integer '-p', '--port', 'custom port', default: 8050
 
   o.bool '-q', '--quiet', 'suppress output (quiet mode)'
